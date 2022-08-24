@@ -8,4 +8,4 @@ utils.o: utils.c utils.h
 	gcc -c utils.c
 
 clean:
-	rm *.o out
+	del *.o out.exe
