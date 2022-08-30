@@ -62,7 +62,13 @@ matrix *new_eye_matrix(unsigned int dim) {
 
 // reads matrix from file
 matrix *read_matrix(char *filename) {
-    FILE *f;
+    FILE *f = fopen(filename, "r");
+
+    if (f == NULL) {
+        fprintf(stderr, "Error: Cannot open %s\n", filename);
+        exit(1);
+    }
+
     matrix* m;
     int num_rows, num_cols, is_square;
 
@@ -89,6 +95,7 @@ void free_matrix(matrix *m) {
     free(m);
 }
 
-int main() {
-    printf("hello world");
+int main(int argc, char **argv) {
+    matrix *m = read_matrix(argv[1]);
+    printf("%d", m->is_square);
 }
