@@ -86,6 +86,19 @@ matrix *read_matrix(char *filename) {
     return m;
 }
 
+// copy a matrix
+matrix *copy_matrix(matrix *m) {
+    matrix *nm = new_matrix(m->num_rows, m->num_cols);
+
+    for (int i = 0; i < m->num_rows; i++) {
+        for (int j = 0; j < m->num_cols; j++) {
+            nm->data[i][j] = m->data[i][j];
+        }
+    }
+
+    return nm;
+}
+
 // destructor
 void free_matrix(matrix *m) {
     for (int i = 0; i < m->num_rows; ++i) {
@@ -95,7 +108,50 @@ void free_matrix(matrix *m) {
     free(m);
 }
 
+// print matrix to stdout
+void print_matrix(matrix *m) {
+    for (int i = 0; i < m->num_rows; i++) {
+        for (int j = 0; j < m->num_cols; j++) {
+            printf("%lf\t", m->data[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// check matrix equality
+// matrix a = matrix b is of the same order
+// and same corresponding elements
+int is_equal_matrix(matrix *a, matrix *b) {
+    if (!(a->num_rows == b->num_rows) && !(a->num_cols && b->num_cols)) {
+        return 0;
+    }
+
+    for (int i = 0; i < a->num_rows; i++) {
+        for (int j = 0; j < a->num_cols; j++) {
+            if (a->data[i][j] != b->data[i][j]) {
+                return 0;
+            }
+        }
+    }
+
+    return 1;
+}
+
+// scalar multiplication
+matrix *smult(matrix *m, double num) {
+    matrix *nm = copy_matrix(m);
+
+    for (int i = 0; i < nm->num_rows; i++) {
+        for (int j = 0; j < nm->num_cols; j++) {
+            nm->data[i][j] *= num; 
+        }
+    }
+
+    return nm;
+}
+
 int main(int argc, char **argv) {
     matrix *m = read_matrix(argv[1]);
-    printf("%d", m->is_square);
+    m = smult(m, 2);
+    print_matrix(m);
 }
