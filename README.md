@@ -35,3 +35,6 @@ Here are the operations that this library hopes to accomplish:
     - Matrix Determinates
     - Matrix Inverts
     - Matrix Solver
+
+## Ideas
+- think about optimizing cache performance (ref lab 8 cpsc 313)
