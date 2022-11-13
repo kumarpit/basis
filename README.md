@@ -38,3 +38,6 @@ Here are the operations that this library hopes to accomplish:
 
 ## Ideas
 - think about optimizing cache performance (ref lab 8 cpsc 313)
+
+## References
+- https://www.andreinc.net/2021/01/20/writing-your-own-linear-algebra-matrix-library-in-c
