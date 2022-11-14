@@ -1,11 +1,11 @@
 out: basis.o utils.o
-	gcc basis.o utils.o -o out
+	gcc -fopenmp basis.o utils.o -o out
 
 basis.o: basis.c basis.h
-	gcc -c basis.c
+	gcc -c -fopenmp basis.c
 
 utils.o: utils.c utils.h
-	gcc -c utils.c
+	gcc -c -fopenmp utils.c
 
 clean:
 	rm *.o *.exe out

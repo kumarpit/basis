@@ -1,6 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "basis.h"
+#include <sys/resource.h>
+#include <sys/time.h>
+#include "omp.h"
+#define tv_ms_diff(tv1, tv2) \
+        (tv2.tv_sec * 1000) + ((double)tv2.tv_usec / 1000) - \
+        ((tv1.tv_sec * 1000) + ((double)tv1.tv_usec / 1000))
 
 
 // constructor - generates zero-valued matrix
@@ -153,19 +159,44 @@ matrix *smult(matrix *m, double num) {
 // matrix multiplication
 matrix *mmult(matrix *a, matrix *b) {
     if (a->num_cols != b->num_rows) return NULL;
+    struct timeval tv_begin, tv_end;
+    struct rusage usage_begin, usage_end;
+    
     matrix *ret = new_matrix(a->num_rows, b->num_cols);
     int i, j, k;
     
+    int r = getrusage(RUSAGE_SELF, &usage_begin);
+    // assert (r >= 0);
+    r = gettimeofday(&tv_begin, 0);
+    // assert(r >= 0);
+
+    // omp_set_num_threads(omp_get_num_procs());
+
+    #pragma omp for
     for (i=0; i < a->num_rows; i++)
     for (k=0; k < a->num_cols; k++) 
     for (j=0; j < b->num_cols; j++)
         ret->data[i][j] += a->data[i][k] * b->data[k][j];
-    
+
+    r = gettimeofday(&tv_end, 0);
+    // assert (r >= 0);
+    r = getrusage(RUSAGE_SELF, &usage_end);
+    // assert (r >= 0);
+
+    // Compute elapsed time in ms
+    printf("Elapsed time (ms): %7.2f\n", tv_ms_diff(tv_begin, tv_end));
+    printf("User time (ms)   : %7.2f\n",
+        tv_ms_diff(usage_begin.ru_utime, usage_end.ru_utime));
+    printf("System time (ms) : %7.2f\n",
+        tv_ms_diff(usage_begin.ru_stime, usage_end.ru_stime));
+
     return ret;
 }
 
 int main(int argc, char **argv) {
-    matrix *m = read_matrix(argv[1]);
-    m = mmult(m, m);
-    print_matrix(m);
+    // matrix *m = read_matrix(argv[1]);
+    matrix *a = new_rand_matrix(2048, 2048, 10, 100);
+    matrix *b = new_rand_matrix(2048, 2048, 10, 100);
+    a = mmult(a, b);
+    // print_matrix(a);
 }
