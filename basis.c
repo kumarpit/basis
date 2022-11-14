@@ -172,7 +172,7 @@ matrix *mmult(matrix *a, matrix *b) {
 
     // omp_set_num_threads(omp_get_num_procs());
 
-    #pragma omp for
+    #pragma omp parallel for private(i,j,k) shared(ret, a, b)
     for (i=0; i < a->num_rows; i++)
     for (k=0; k < a->num_cols; k++) 
     for (j=0; j < b->num_cols; j++)
@@ -195,8 +195,8 @@ matrix *mmult(matrix *a, matrix *b) {
 
 int main(int argc, char **argv) {
     // matrix *m = read_matrix(argv[1]);
-    matrix *a = new_rand_matrix(2048, 2048, 10, 100);
-    matrix *b = new_rand_matrix(2048, 2048, 10, 100);
+    matrix *a = new_rand_matrix(4096, 4096, 10, 100);
+    matrix *b = new_rand_matrix(4096, 4096, 10, 100);
     a = mmult(a, b);
     // print_matrix(a);
 }
