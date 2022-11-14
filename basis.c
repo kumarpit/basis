@@ -150,8 +150,22 @@ matrix *smult(matrix *m, double num) {
     return nm;
 }
 
+// matrix multiplication
+matrix *mmult(matrix *a, matrix *b) {
+    if (a->num_cols != b->num_rows) return NULL;
+    matrix *ret = new_matrix(a->num_rows, b->num_cols);
+    int i, j, k;
+    
+    for (i=0; i < a->num_rows; i++)
+    for (k=0; k < a->num_cols; k++) 
+    for (j=0; j < b->num_cols; j++)
+        ret->data[i][j] += a->data[i][k] * b->data[k][j];
+    
+    return ret;
+}
+
 int main(int argc, char **argv) {
     matrix *m = read_matrix(argv[1]);
-    m = smult(m, 2);
+    m = mmult(m, m);
     print_matrix(m);
 }

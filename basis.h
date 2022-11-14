@@ -32,5 +32,6 @@ Basic matrix operations
 */
 int is_equal_matrix(matrix *a, matrix *b);
 matrix *smult(matrix *m, double num);
+matrix *mmult(matrix *a, matrix *b);
 
 #endif
