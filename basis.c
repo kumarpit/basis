@@ -12,6 +12,8 @@
         (tv2.tv_sec * 1000) + ((double)tv2.tv_usec / 1000) - \
         ((tv1.tv_sec * 1000) + ((double)tv1.tv_usec / 1000))
 
+// instead of ranging through k, range through i,j
+// better use of cache
 typedef struct thread_args_t {
     int start;
     int end;
