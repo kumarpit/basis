@@ -32,8 +32,10 @@ Here are the operations that this library hopes to accomplish:
     - LU, QR, SVD Decomposition
     - Least Squares Solution to `Ax = b`
     - Polynomial and Cubic Spline interpolation
-- Basic Linear Programming
+- Linear Programming
     - Simplex Method
+    - Matrix Games
+    - Optimal Transport
 - FFT
 - Quarternions
 
