@@ -15,29 +15,25 @@ Basis is a linear algebra library written in C as an exercise to revise linear a
 
 Here are the operations that this library hopes to accomplish:
 - Matrix File IO
-    - Read (to read a matrix from a file)
-    - Copy (to duplicate an existing matrix)
-    - Make (to create an n-by-p matrix of Zeros)
-    - Write (to write to a file)
-- Simple Matrix Operations
+- Basic Vector Operations
+- Basic Matrix Operations
     - Generate Identity Matrices
-    - Matrix Trace (Sum of elements along the diagonal)
-    - Matrix Transpose (To flip a matrix along the diagonal)
-    - Matrix Mean (returns the average of each column in a matrix)
+    - Trace
+    - Transpose
+    - Mean (returns the average of each column in a matrix)
     - Matrix Multiplication
-    - Matrix Scaling
-    - Matrix Dot Product
+    - Scaling
+    - Solve Equations of the form `Ax = b`
 - Advanced Matrix Operations
     - Gram-Schmidt (For orthonormalising a set of vectors)
-    - Eigenvalues
-    - Matrix Determinates
-    - Invert
-    - Matrix Solver (Solve equations of the form Ax = b)
-    - LU Decomposition
-    - QR decomposition
-    - Least squares solution to Ax = b
+    - Determining Eigenvalues and Eigenvectors
+    - Determinants
+    - Matrix Inverse
+    - LU, QR, SVD Decomposition
+    - Least Squares Solution to `Ax = b`
     - Polynomial and Cubic Spline interpolation
 - Basic Linear Programming
+    - Simplex Method
 - FFT
 - Quarternions
 
