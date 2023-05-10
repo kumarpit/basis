@@ -28,7 +28,7 @@ void free_matrix(matrix *m);
 void print_matrix(matrix *m);
 
 /**
-Basic matrix operations
+Basic matrix operationsc
 */
 int is_equal_matrix(matrix *a, matrix *b);
 matrix *smult(matrix *m, double num);

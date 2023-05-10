@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "basis.h"
+#include "matrix.h"
 #include <sys/resource.h>
 #include <sys/time.h>
 #include "omp.h"
@@ -14,6 +14,7 @@
 
 // instead of ranging through k, range through i,j
 // better use of cache
+// If the only possible errors are programmer errors, don't return an error code, use asserts inside the function.
 typedef struct thread_args_t {
     int start;
     int end;
