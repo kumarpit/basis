@@ -38,6 +38,7 @@ Here are the operations that this library hopes to accomplish:
     - Optimal Transport
 - FFT
 - Quarternions
+- Python Bindings
 
 ## Goals
 - think about optimizing cache performance (ref lab 8 cpsc 313)

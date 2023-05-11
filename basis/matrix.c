@@ -3,7 +3,7 @@
 #include "matrix.h"
 #include <sys/resource.h>
 #include <sys/time.h>
-#include "omp.h"
+#include "../omp.h"
 #include <assert.h>
 #include <pthread.h>
 #define NUM_THREADS 8
@@ -245,28 +245,28 @@ void *pt_mmult(void *arg) {
     assert (r >= 0);
 }
 
-int main(int argc, char **argv) {
-    pthread_t ts[NUM_THREADS];
-    thread_args work_ranges[NUM_THREADS];
-    int curr_start, range;
-    curr_start = 0;
-    range = DIM / NUM_THREADS;
-    for (int i=0; i < NUM_THREADS; i++) {
-        work_ranges[i].start = curr_start;
-        work_ranges[i].end = curr_start + range;
-        curr_start += range;
-    }
-    work_ranges[NUM_THREADS-1].end = DIM;
-    init();
-    for(int i = 0; i < NUM_THREADS; i++) {
-        pthread_create(&ts[i], NULL, pt_mmult, &work_ranges[i]);
-    }
+// int main(int argc, char **argv) {
+//     pthread_t ts[NUM_THREADS];
+//     thread_args work_ranges[NUM_THREADS];
+//     int curr_start, range;
+//     curr_start = 0;
+//     range = DIM / NUM_THREADS;
+//     for (int i=0; i < NUM_THREADS; i++) {
+//         work_ranges[i].start = curr_start;
+//         work_ranges[i].end = curr_start + range;
+//         curr_start += range;
+//     }
+//     work_ranges[NUM_THREADS-1].end = DIM;
+//     init();
+//     for(int i = 0; i < NUM_THREADS; i++) {
+//         pthread_create(&ts[i], NULL, pt_mmult, &work_ranges[i]);
+//     }
 
-    for(int i = 0; i < NUM_THREADS; i++) {
-        pthread_join(ts[i], NULL);
-    }
+//     for(int i = 0; i < NUM_THREADS; i++) {
+//         pthread_join(ts[i], NULL);
+//     }
     
-    matrix *ret = mmult(matrix_a, matrix_b);
+//     matrix *ret = mmult(matrix_a, matrix_b);
 
-    assert(is_equal_matrix(ret, matrix_c) == 1);
-}
+//     assert(is_equal_matrix(ret, matrix_c) == 1);
+// }

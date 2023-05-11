@@ -17,5 +17,6 @@ int are_orthogonal_vec(vec *v1, vec *v2);
 float vec_mag(vec *v);
 float vec_mag_squared(vec *v);
 void free_vec(vec *v);
+void print_vec(vec *v);
 
 #endif
