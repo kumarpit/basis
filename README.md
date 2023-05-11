@@ -39,6 +39,8 @@ Here are the operations that this library hopes to accomplish:
 - FFT
 - Quarternions
 - Python Bindings
+  - Call program from Python
+  - Call Python for image compression using SVD
 
 ## Goals
 - think about optimizing cache performance (ref lab 8 cpsc 313)
