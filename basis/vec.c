@@ -61,6 +61,7 @@ int are_orthogonal_vec(vec *v1, vec *v2) {
 vec *cross(vec *v1, vec *v2) {
     assert(v1->dim == v2->dim);
     // TODO!!!
+    
 }
 
 float vec_mag(vec *v) {
