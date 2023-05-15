@@ -33,7 +33,7 @@ $(TEST)/bin:
 $(TEST)/bin/%: $(TEST)/%.c $(OBJS) | $(TEST)/bin
 	$(CC) $(CFLAGS) $< $(OBJS) -o $@ -lcriterion
 
-test: $(TESTBINS) $(TEST)/bin
+test: $(TESTBINS)
 	for test in $(TESTBINS) ; do ./$$test ; done
 
 clean:

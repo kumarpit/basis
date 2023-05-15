@@ -3,19 +3,21 @@
 
 typedef struct {
     unsigned int dim;
-    float *components;
+    double *components;
 } vec;
 
 vec *new_vec(unsigned int dim);
+vec *make_vec2d(double i, double j);
+vec *make_vec3d(double i, double j, double k);
 vec *add_vec(vec *v1, vec *v2);
 void normalize_vec(vec *v);
-void scale_vec(float scale, vec *v);
+void scale_vec(double scale, vec *v);
 int are_equal_vec(vec *v1, vec *v2);
-float dot(vec *v1, vec *v2);
+double dot(vec *v1, vec *v2);
 vec *cross(vec *v1, vec *v2);
 int are_orthogonal_vec(vec *v1, vec *v2);
-float vec_mag(vec *v);
-float vec_mag_squared(vec *v);
+double vec_mag(vec *v);
+double vec_mag_squared(vec *v);
 void free_vec(vec *v);
 void print_vec(vec *v);
 
