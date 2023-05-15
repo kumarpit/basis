@@ -1,12 +1,11 @@
 CC=gcc-13
 INCDIRS=-I/opt/homebrew/cellar/criterion/2.4.1_2/include
 OPT=-O0
-OMP=-fopenmp
 SRC=basis
 OBJ=obj
 SRCS=$(wildcard $(SRC)/*.c)
 OBJS=$(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SRCS))
-CFLAGS=-Wall -Wextra $(OMP) $(INCDIRS) $(OPT)
+CFLAGS=-Wall -Wextra $(INCDIRS) $(OPT)
 
 BINARY=bin
 

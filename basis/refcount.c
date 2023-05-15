@@ -10,11 +10,8 @@ typedef struct _rc_header {
 
 void *rc_malloc(int nbytes, rc_finalizer_t finalizer) {
   rc_header *rc = malloc(nbytes + sizeof(rc_header));
-  
   rc->refcount = 1;
   rc->finalizer = finalizer;
-  
-  // return offset pointer (+1 on a structure type points just past the end)
   return (void *)(rc + 1);
 }
 
