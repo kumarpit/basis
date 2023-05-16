@@ -41,11 +41,7 @@ matrix *new_matrix(unsigned int num_rows, unsigned int num_cols) {
     m->num_rows = num_rows;
     m->num_cols = num_cols;
     m->is_square = (num_rows == num_cols) ? 1 : 0;
-    m->data = calloc(num_rows, sizeof(*m->data));
-
-    for (int i = 0; i < m->num_rows; ++i) {
-        m->data[i] = calloc(num_cols, sizeof(**m->data));
-    }
+    m->data = calloc(num_rows * num_cols, sizeof(double));
 
     return m;
 }
@@ -55,7 +51,7 @@ matrix *new_rand_matrix(unsigned int num_rows, unsigned int num_cols, double min
     matrix *m = new_matrix(num_rows, num_cols);
     for (int i = 0; i < num_rows; ++i) {
         for (int j = 0; j < num_cols; ++j) {
-            m->data[i][j] = rand_interval(min, max);
+            set_matrix_val(m, rand_interval(min, max), i, j);
         }
     }
 
@@ -76,12 +72,18 @@ matrix *new_rand_sqr_matrix(unsigned int dim, double min, double max) {
 matrix *new_eye_matrix(unsigned int dim) {
     matrix *m = new_sqr_matrix(dim);
     for (int i = 0; i < dim; ++i) {
-        m->data[i][i] = 1.0;
+        set_matrix_val(m, 1, i, i);
     }   
-
     return m;
 }
 
+double get_matrix_val(matrix *m, int i, int j) {
+    return m->data[i*m->num_cols + j];
+}
+
+void set_matrix_val(matrix *m, double val, int i, int j) {
+    m->data[i*m->num_cols + j] = val;
+}
 
 // PRIVATE
 void free_fmatrices(fmatrices *fm) {
@@ -115,7 +117,7 @@ fmatrices *read_matrix(char *filename) {
 
         for (int i = 0; i < num_rows; ++i) {
             for (int j = 0; j < num_cols; ++j) {
-                fscanf(f, "%lf\t", &m[fm->count]->data[i][j]);
+                fscanf(f, "%lf\t", &m[fm->count]->data[i*num_cols + j]);
             }
         }
 
@@ -138,10 +140,11 @@ fmatrices *read_matrix(char *filename) {
 // copy a matrix
 matrix *copy_matrix(matrix *m) {
     matrix *nm = new_matrix(m->num_rows, m->num_cols);
-
+    int num_cols = m->num_cols;
     for (int i = 0; i < m->num_rows; i++) {
         for (int j = 0; j < m->num_cols; j++) {
-            nm->data[i][j] = m->data[i][j];
+            double val = get_matrix_val(m, i, j);
+            set_matrix_val(nm, val, i, j);
         }
     }
 
@@ -150,9 +153,6 @@ matrix *copy_matrix(matrix *m) {
 
 // destructor
 void free_matrix(matrix *m) {
-    for (int i = 0; i < m->num_rows; ++i) {
-        free(m->data[i]);
-    }
     free(m->data);
 }
 
@@ -160,7 +160,7 @@ void free_matrix(matrix *m) {
 void print_matrix(matrix *m) {
     for (int i = 0; i < m->num_rows; i++) {
         for (int j = 0; j < m->num_cols; j++) {
-            printf("%lf\t", m->data[i][j]);
+            printf("%lf\t", get_matrix_val(m, i, j));
         }
         printf("\n");
     }
@@ -174,9 +174,11 @@ int are_equal_matrices(matrix *a, matrix *b) {
         return 0;
     }
 
+    int num_cols = a->num_cols;
+
     for (int i = 0; i < a->num_rows; i++) {
-        for (int j = 0; j < a->num_cols; j++) {
-            if (fabs(a->data[i][j] - b->data[i][j]) > 0.0001) {
+        for (int j = 0; j < num_cols; j++) {
+            if (fabs(get_matrix_val(a, i, j) - get_matrix_val(b, i, j)) > 0.0001) {
                 return 0;
             }
         }
@@ -189,7 +191,8 @@ int are_equal_matrices(matrix *a, matrix *b) {
 void scalar_mult(matrix *m, double num) {
     for (int i = 0; i < m->num_rows; i++) {
         for (int j = 0; j < m->num_cols; j++) {
-            m->data[i][j] *= num; 
+            double val = get_matrix_val(m, i, j);
+            set_matrix_val(m, num * val, i, j);
         }
     }
 }

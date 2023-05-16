@@ -5,19 +5,18 @@
 Test(Matrix, read_matrix) {
     fmatrices *read = read_matrix("tests/test_matrices/matrix1.txt");
     matrix *m = new_matrix(3,3);
-    double **data = m->data;
     
-    data[0][0] = 1;
-    data[0][1] = 2;
-    data[0][2] = 3;
+    set_matrix_val(m, 1, 0, 0);
+    set_matrix_val(m, 2, 0, 1);
+    set_matrix_val(m, 3, 0, 2);
 
-    data[1][0] = 2;
-    data[1][1] = 3;
-    data[1][2] = 4;
+    set_matrix_val(m, 2, 1, 0);
+    set_matrix_val(m, 3, 1, 1);
+    set_matrix_val(m, 4, 1, 2);
 
-    data[2][0] = 4;
-    data[2][1] = 5;
-    data[2][2] = 6;
+    set_matrix_val(m, 4, 2, 0);
+    set_matrix_val(m, 5, 2, 1);
+    set_matrix_val(m, 6, 2, 2);
 
     cr_assert(are_equal_matrices(read->matrices[0], m)); 
 
@@ -29,19 +28,18 @@ Test(Matrix, scalar_mult) {
     fmatrices *read = read_matrix("tests/test_matrices/matrix1.txt");
     scalar_mult(read->matrices[0], 2);
     matrix *m = new_matrix(3,3);
-    double **data = m->data;
     
-    data[0][0] = 2;
-    data[0][1] = 4;
-    data[0][2] = 6;
+    set_matrix_val(m, 2, 0, 0);
+    set_matrix_val(m, 4, 0, 1);
+    set_matrix_val(m, 6, 0, 2);
 
-    data[1][0] = 4;
-    data[1][1] = 6;
-    data[1][2] = 8;
+    set_matrix_val(m, 4, 1, 0);
+    set_matrix_val(m, 6, 1, 1);
+    set_matrix_val(m, 8, 1, 2);
 
-    data[2][0] = 8;
-    data[2][1] = 10;
-    data[2][2] = 12;
+    set_matrix_val(m, 8, 2, 0);
+    set_matrix_val(m, 10, 2, 1);
+    set_matrix_val(m, 12, 2, 2);
 
     cr_assert(are_equal_matrices(read->matrices[0], m)); 
 

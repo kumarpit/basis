@@ -7,12 +7,11 @@
 
 /**
 type definitions
-TODO: use 1d array instead of 2d
 */
 typedef struct _matrix {
     unsigned int num_rows;
     unsigned int num_cols;
-    double **data;
+    double *data;
     int is_square;
 } matrix;
 
@@ -34,6 +33,8 @@ fmatrices *read_matrix(char *filename);
 matrix *copy_matrix(matrix *m);
 void free_matrix(matrix *m);
 void print_matrix(matrix *m);
+double get_matrix_val(matrix *m, int i, int j);
+void set_matrix_val(matrix *m, double val, int i, int j);
 
 /**
 Basic matrix operationsc
