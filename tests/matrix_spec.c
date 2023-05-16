@@ -4,24 +4,31 @@
 
 Test(Matrix, read_matrix) {
     fmatrices *read = read_matrix("tests/test_matrices/matrix1.txt");
-    matrix *m = new_matrix(3,3);
+    matrix *m1 = new_matrix(3,3);
+    matrix *m2 = new_matrix(2,1);
     
-    set_matrix_val(m, 1, 0, 0);
-    set_matrix_val(m, 2, 0, 1);
-    set_matrix_val(m, 3, 0, 2);
+    set_matrix_val(m1, 1, 0, 0);
+    set_matrix_val(m1, 2, 0, 1);
+    set_matrix_val(m1, 3, 0, 2);
 
-    set_matrix_val(m, 2, 1, 0);
-    set_matrix_val(m, 3, 1, 1);
-    set_matrix_val(m, 4, 1, 2);
+    set_matrix_val(m1, 2, 1, 0);
+    set_matrix_val(m1, 3, 1, 1);
+    set_matrix_val(m1, 4, 1, 2);
 
-    set_matrix_val(m, 4, 2, 0);
-    set_matrix_val(m, 5, 2, 1);
-    set_matrix_val(m, 6, 2, 2);
+    set_matrix_val(m1, 4, 2, 0);
+    set_matrix_val(m1, 5, 2, 1);
+    set_matrix_val(m1, 6, 2, 2);
 
-    cr_assert(are_equal_matrices(read->matrices[0], m)); 
+    set_matrix_val(m2, 1, 0, 0);
+    set_matrix_val(m2, 0, 1, 0);
+
+    cr_assert(read->count == 2);
+    cr_assert(are_equal_matrices(read->matrices[0], m1));
+    cr_assert(are_equal_matrices(read->matrices[1], m2));
 
     rc_free_ref(read);
-    rc_free_ref(m);
+    rc_free_ref(m1);
+    rc_free_ref(m2);
 }
 
 Test(Matrix, scalar_mult) {

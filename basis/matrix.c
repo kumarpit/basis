@@ -19,19 +19,14 @@
 typedef struct thread_args_t {
     int start;
     int end;
+    int dim_rows;
+    int dim_cols;
+    matrix *dest;
+    matrix *a;
+    matrix *b;
 } thread_args;
 
-matrix *matrix_a;
-matrix *matrix_b;
-matrix *matrix_c;
-
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-
-void init() {
-    matrix_a = new_rand_matrix(DIM, DIM, 0, 5);
-    matrix_b = new_rand_matrix(DIM, DIM, 0, 5);
-    matrix_c = new_matrix(DIM, DIM);
-}
 
 // constructor - generates zero-valued matrix
 matrix *new_matrix(unsigned int num_rows, unsigned int num_cols) {
@@ -197,6 +192,55 @@ void scalar_mult(matrix *m, double num) {
     }
 }
 
+// per thread
+void *matrix_mult_t(void *arg) {
+    thread_args * args = (thread_args *) arg;
+    for(int i = 0; i < args->dim_rows; i++) {
+        for(int j = 0; j < args->dim_cols; j++) {
+            double thread_private_tmp = 0;
+            for(int k = args->start; k < args->end; k++) {
+                thread_private_tmp += get_matrix_val(args->a, i, k) * get_matrix_val(args->b, k, j);
+            }
+            pthread_mutex_lock(&lock);
+                double curr_val = get_matrix_val(args->dest, i, j);
+                set_matrix_val(args->dest, curr_val + thread_private_tmp, i, j);
+            pthread_mutex_unlock(&lock);
+        }
+    }
+    return NULL;
+}
+
 matrix *matrix_mult(matrix *a, matrix *b) {
-    return a;
+    int arows = a->num_rows;
+    int bcols = b->num_cols;
+    matrix *res = new_matrix(arows, bcols);
+
+    int dim = a->num_cols;
+    pthread_t child_threads[NUM_THREADS];
+    thread_args work_args[NUM_THREADS];
+    int current_start, range;
+    current_start = 0;
+
+    range = dim / NUM_THREADS;
+    
+    // make global thread worker args
+    for(int i = 0; i < NUM_THREADS; i++) {
+        work_args[i].start = current_start;
+        work_args[i].end = current_start + range;
+        work_args[i].dim_rows = arows;
+        work_args[i].dim_cols = bcols;
+        work_args[i].dest = res;
+        work_args[i].a = a;
+        work_args[i].b = b;
+        current_start += range;
+    }
+    work_args[NUM_THREADS-1].end = dim;
+    
+    for(int i = 0; i < NUM_THREADS; i++) {
+        pthread_create(&child_threads[i], NULL, matrix_mult_t, &work_args[i]);
+    }
+    for(int i = 0; i < NUM_THREADS; i++) {
+        pthread_join(child_threads[i], NULL);
+    }
+    return res;
 }
