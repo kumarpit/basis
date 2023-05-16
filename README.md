@@ -42,9 +42,6 @@ Here are the operations that this library hopes to accomplish:
   - Call program from Python
   - Call Python for image compression using SVD
 
-## Goals
-- think about optimizing cache performance (ref lab 8 cpsc 313)
-- parallelize matrix multiply manually using pthreads https://www.eecs.umich.edu/courses/eecs570/discussions/w20/pthreads.html
-
 ## References
 - https://www.andreinc.net/2021/01/20/writing-your-own-linear-algebra-matrix-library-in-c
+- https://www.eecs.umich.edu/courses/eecs570/discussions/w20/pthreads.html
