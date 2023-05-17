@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "refcount.h"
 
-// A LIGHTWEIGHT REFERENCE COUNTING IMPLEMENTATION FOR BASIS
+// A lightweight reference counting implementation
 
 typedef struct _rc_header {
   int refcount;

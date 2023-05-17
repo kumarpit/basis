@@ -5,6 +5,7 @@
 #include "refcount.h"
 #include <math.h>
 
+// generates new zero-valued vector
 vec *new_vec(unsigned int dim) {
     vec *v = rc_malloc(sizeof(vec), free_vec);
     v->dim = dim;
@@ -12,6 +13,7 @@ vec *new_vec(unsigned int dim) {
     return v;
 }
 
+// generate new 2d vector <i,j>
 vec *make_vec2d(double i, double j) {
     vec *v = new_vec(2);
     double *vc = v->components;
@@ -20,6 +22,7 @@ vec *make_vec2d(double i, double j) {
     return v;
 }
 
+// generate new 3d vector <i,j,k>
 vec *make_vec3d(double i, double j, double k) {
     vec *v = new_vec(3);
     double *vc = v->components;
@@ -29,6 +32,7 @@ vec *make_vec3d(double i, double j, double k) {
     return v;
 }
 
+// vector addition
 vec *add_vec(vec *v1, vec *v2) {
     assert(v1->dim == v2->dim);
     vec *v = new_vec(v1->dim);
@@ -38,6 +42,7 @@ vec *add_vec(vec *v1, vec *v2) {
     return v;
 }
 
+// vector normalization
 void normalize_vec(vec *v) {
     double mag = vec_mag(v);
     for (int i = 0; i < v->dim; i++) {
@@ -45,12 +50,14 @@ void normalize_vec(vec *v) {
     }
 }
 
+// scale a vector by a double value
 void scale_vec(double scale, vec *v) {
     for (int i = 0; i < v->dim; i++) {
         v->components[i] = scale * v->components[i];
     }
 }
 
+// check vector equality (by value, not by reference)
 int are_equal_vec(vec *v1, vec *v2) {
     if (v1->dim != v2->dim) return 0;
     for (int i = 0; i < v1->dim; i++) {
@@ -61,6 +68,7 @@ int are_equal_vec(vec *v1, vec *v2) {
     return 1;
 }
 
+// vector dot product
 double dot(vec *v1, vec *v2) {
     assert(v1->dim == v2->dim);
     double sum = 0;
@@ -71,15 +79,19 @@ double dot(vec *v1, vec *v2) {
     return sum;
 }
 
+// check if two vectors are othogonal
 int are_orthogonal_vec(vec *v1, vec *v2) {
     return dot(v1, v2) == 0;
 }
 
+// vector cross-product
+// TODO!!!
 vec *cross(vec *v1, vec *v2) {
     assert(v1->dim == v2->dim);
     // IMPLEMENT DETERMINANTS FIRST
 }
 
+// calculate the magnitude of a vector
 double vec_mag(vec *v) {
     double sum = 0.0;
     for (int i = 0; i < v->dim; i++) {
@@ -88,10 +100,12 @@ double vec_mag(vec *v) {
     return sqrt(sum);
 }
 
+// calculate the squared magnitude of a vector - often a useful quantity
 double vec_mag_squared(vec *v) {
     return pow(vec_mag(v), 2);
 }
 
+// destroy a vector
 void free_vec(vec *v) {
     free(v->components);
 }

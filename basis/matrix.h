@@ -22,7 +22,7 @@ typedef struct _fmatrices {
 
 
 /**
-basic matrix generation functions
+initialization functions
 */
 matrix *new_matrix(unsigned int num_rows, unsigned int num_cols);
 matrix *new_sqr_matrix(unsigned int dim);
@@ -37,7 +37,7 @@ double get_matrix_val(matrix *m, int i, int j);
 void set_matrix_val(matrix *m, double val, int i, int j);
 
 /**
-Basic matrix operationsc
+matrix operations
 */
 int are_equal_matrices(matrix *a, matrix *b);
 void scalar_mult(matrix *m, double num);
