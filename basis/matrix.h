@@ -8,16 +8,18 @@
 /**
 type definitions
 */
+typedef unsigned int uint;
+
 typedef struct _matrix {
-    unsigned int num_rows;
-    unsigned int num_cols;
+    uint num_rows;
+    uint num_cols;
     double *data;
     int is_square;
 } matrix;
 
 typedef struct _fmatrices {
     matrix **matrices;
-    int count;
+    uint count;
 } fmatrices;
 
 
@@ -25,16 +27,18 @@ typedef struct _fmatrices {
 initialization functions
 */
 matrix *new_matrix(unsigned int num_rows, unsigned int num_cols);
-matrix *new_sqr_matrix(unsigned int dim);
-matrix *new_rand_matrix(unsigned int num_rows, unsigned int num_cols, double min, double max);
-matrix *new_rand_sqr_matrix(unsigned int dim, double min, double max);
+matrix *new_sqr_matrix(uint dim);
+matrix *new_rand_matrix(uint num_rows, uint num_cols, double min, double max);
+matrix *new_rand_sqr_matrix(uint dim, double min, double max);
 matrix *new_eye_matrix(unsigned int dim);
 fmatrices *read_matrix(char *filename);
 matrix *copy_matrix(matrix *m);
-void free_matrix(matrix *m);
+void free_matrix(void *m);
 void print_matrix(matrix *m);
-double get_matrix_val(matrix *m, int i, int j);
-void set_matrix_val(matrix *m, double val, int i, int j);
+double get_matrix_val(matrix *m, uint i, uint j);
+void set_matrix_val(matrix *m, double val, uint i, uint j);
+matrix *get_matrix_col(matrix *m, unsigned int c);
+matrix *get_matrix_row(matrix *m, unsigned int c);
 
 /**
 matrix operations
