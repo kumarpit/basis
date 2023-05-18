@@ -61,3 +61,19 @@ Test(Matrix, matrix_mult) {
     rc_free_ref(read);
     rc_free_ref(res);
 }
+
+Test(Matrix, get_matrix_col) {
+    fmatrices *read = read_matrix("tests/test_matrices/matrix3.txt");
+    matrix *col = get_matrix_col(read->matrices[0], 1);
+    cr_assert(are_equal_matrices(read->matrices[1], col));
+    rc_free_ref(read);
+    rc_free_ref(col);
+}
+
+Test(Matrix, get_matrix_row) {
+    fmatrices *read = read_matrix("tests/test_matrices/matrix4.txt");
+    matrix *row = get_matrix_row(read->matrices[0], 0);
+    cr_assert(are_equal_matrices(read->matrices[1], row));
+    rc_free_ref(read);
+    rc_free_ref(row);
+}
