@@ -3,7 +3,7 @@
 #include "../basis/refcount.h"
 
 Test(Matrix, read_matrix) {
-    fmatrices *read = read_matrix("tests/test_matrices/matrix1.txt");
+    fmatrices *read = read_matrix("tests/test_matrices/matrix1.data");
     matrix *m1 = new_matrix(3,3);
     matrix *m2 = new_matrix(2,1);
     
@@ -32,7 +32,7 @@ Test(Matrix, read_matrix) {
 }
 
 Test(Matrix, scalar_mult) {
-    fmatrices *read = read_matrix("tests/test_matrices/matrix1.txt");
+    fmatrices *read = read_matrix("tests/test_matrices/matrix1.data");
     scalar_mult(read->matrices[0], 2);
     matrix *m = new_matrix(3,3);
     
@@ -55,7 +55,7 @@ Test(Matrix, scalar_mult) {
 }
 
 Test(Matrix, matrix_mult) {
-    fmatrices *read = read_matrix("tests/test_matrices/matrix2.txt");
+    fmatrices *read = read_matrix("tests/test_matrices/matrix2.data");
     matrix *res = matrix_mult(read->matrices[0], read->matrices[1]);
     cr_assert(are_equal_matrices(res, read->matrices[2]));
     rc_free_ref(read);
@@ -63,7 +63,7 @@ Test(Matrix, matrix_mult) {
 }
 
 Test(Matrix, get_matrix_col) {
-    fmatrices *read = read_matrix("tests/test_matrices/matrix3.txt");
+    fmatrices *read = read_matrix("tests/test_matrices/matrix3.data");
     matrix *col = get_matrix_col(read->matrices[0], 1);
     cr_assert(are_equal_matrices(read->matrices[1], col));
     rc_free_ref(read);
@@ -71,7 +71,7 @@ Test(Matrix, get_matrix_col) {
 }
 
 Test(Matrix, get_matrix_row) {
-    fmatrices *read = read_matrix("tests/test_matrices/matrix4.txt");
+    fmatrices *read = read_matrix("tests/test_matrices/matrix4.data");
     matrix *row = get_matrix_row(read->matrices[0], 0);
     cr_assert(are_equal_matrices(read->matrices[1], row));
     rc_free_ref(read);

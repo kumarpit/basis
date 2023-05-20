@@ -8,7 +8,6 @@
 /**
 type definitions
 */
-typedef unsigned int uint;
 
 typedef struct _matrix {
     uint num_rows;
