@@ -17,11 +17,13 @@ void *rc_malloc(int nbytes, rc_finalizer_t finalizer) {
 }
 
 void rc_keep_ref(void *p) {
+  NP_CHECK(p);
   rc_header *rc = ((rc_header *)p) - 1;
   rc->refcount++;
 }
 
 void rc_free_ref(void *p) {
+  NP_CHECK(p);
   rc_header *rc = ((rc_header *)p) - 1;
   rc->refcount--;
   if (rc->refcount == 0) {

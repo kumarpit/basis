@@ -7,6 +7,11 @@
 
 // TEST CREATE FUNCTIONS
 
+Test(Vectors, new_vec) {
+    vec *fv = new_vec(0);
+    cr_assert(!fv);
+}
+
 Test(Vectors, add_vec) {
     vec *v1 = make_vec3d(1,2,3);
     vec *v2 = make_vec3d(2,3,4);
@@ -15,10 +20,16 @@ Test(Vectors, add_vec) {
 
     cr_assert(vaddc[0] == 3);
     cr_assert(vaddc[1] == 5);
-    cr_assert(vaddc[2] == 7);  
+    cr_assert(vaddc[2] == 7);
+
+    // should return NULL on dimension inequality
+    vec *v3 = make_vec2d(1,1);
+    vec *fvadd = add_vec(v1, v3);
+    cr_assert(!fvadd);  
 
     rc_free_ref(v1);
     rc_free_ref(v2);
+    rc_free_ref(v3);
     rc_free_ref(vadd);
 }
 
@@ -60,8 +71,12 @@ Test(Vectors, dot) {
     vec *v2 = make_vec2d(2,2);
     cr_assert(dot(v1,v2) == 6);
 
+    vec *v3 = make_vec3d(1,1,1);
+    cr_assert(dot(v1, v3) == INFINITY);
+
     rc_free_ref(v1);
     rc_free_ref(v2);
+    rc_free_ref(v3);
 }
 
 Test(Vectors, are_orthogonal_vec) {
@@ -71,9 +86,13 @@ Test(Vectors, are_orthogonal_vec) {
     vec *v3 = make_vec2d(1,1);
     cr_assert(!are_orthogonal_vec(v1,v3));
 
+    vec *v4 = make_vec3d(1,1,1);
+    cr_assert(!are_orthogonal_vec(v1, v4));
+
     rc_free_ref(v1);
     rc_free_ref(v2);
     rc_free_ref(v3);
+    rc_free_ref(v4);
 }
 
 Test(Vectors, vec_mag) {
