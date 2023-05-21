@@ -7,11 +7,30 @@
 #include <assert.h>
 #include <pthread.h>
 #include "refcount.h"
+#include "utils.h"
 
 #define NUM_THREADS 4
 #define tv_ms_diff(tv1, tv2) \
         (tv2.tv_sec * 1000) + ((double)tv2.tv_usec / 1000) - \
         ((tv1.tv_sec * 1000) + ((double)tv1.tv_usec / 1000))
+
+#define CANNOT_MAKE_MATRIX \
+    "Matrix requires non-zero dimensions \n" \
+
+#define CANNOT_ACCESS_MATRIX_VALUE \
+    "Out of bounds access to matrix. Accessed row %d and column %d for matrix with %d rows and %d columns. \n" \
+
+#define CANNOT_GET_MATRIX_COL \
+    "Out of bounds access to matrix. Accessed column %d for matrix with %d columns. \n" \
+
+#define CANNOT_GET_MATRIX_ROW \
+    "Out of bounds access to matrix. Accessed row %d for matrix with %d rows. \n" \
+
+#define CANNOT_OPEN_FILE \
+    "Cannot open %s \n" \
+
+#define CANNOT_READ_FILE \
+    "Cannot read file %s. Invalid formatting."
 
 
 typedef struct global_thread_args_t {
@@ -32,19 +51,26 @@ pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 // construct a new zero-valued mxn matrix
 matrix *new_matrix(uint num_rows, uint num_cols) {
-    assert(num_rows > 0 && num_cols > 0);
+    if (num_rows == 0 || num_cols == 0) {
+        BASIS_ERROR(CANNOT_MAKE_MATRIX);
+        return NULL;
+    }
 
     matrix *m = rc_malloc(sizeof(matrix), free_matrix);
     m->num_rows = num_rows;
     m->num_cols = num_cols;
     m->is_square = (num_rows == num_cols) ? 1 : 0;
-    m->data = calloc(num_rows * num_cols, sizeof(double));
+    m->data = rc_malloc(num_rows * num_cols * sizeof(double), NULL);
 
     return m;
 }
 
 // generates a matrix with random values within min, max interval
 matrix *new_rand_matrix(uint num_rows, uint num_cols, double min, double max) {
+    if (num_rows == 0 || num_cols == 0) {
+        BASIS_ERROR(CANNOT_MAKE_MATRIX);
+        return NULL;
+    }
     matrix *m = new_matrix(num_rows, num_cols);
     for (uint i = 0; i < num_rows; ++i) {
         for (uint j = 0; j < num_cols; ++j) {
@@ -57,16 +83,28 @@ matrix *new_rand_matrix(uint num_rows, uint num_cols, double min, double max) {
 
 // generates zero-valued square matrix of size dim
 matrix *new_sqr_matrix(uint dim) {
+    if (dim == 0) {
+        BASIS_ERROR(CANNOT_MAKE_MATRIX);
+        return NULL;
+    }
     return new_matrix(dim, dim);
 }
 
 // generates square matrix with random values within min, max interval
 matrix *new_rand_sqr_matrix(uint dim, double min, double max) {
+    if (dim == 0) {
+        BASIS_ERROR(CANNOT_MAKE_MATRIX);
+        return NULL;
+    }
     return new_rand_matrix(dim, dim, min, max);
 }
 
 // generates identity matrix of dimension dim
 matrix *new_eye_matrix(uint dim) {
+    if (dim == 0) {
+        BASIS_ERROR(CANNOT_MAKE_MATRIX);
+        return NULL;
+    }
     matrix *m = new_sqr_matrix(dim);
     for (uint i = 0; i < dim; ++i) {
         set_matrix_val(m, 1, i, i);
@@ -76,17 +114,27 @@ matrix *new_eye_matrix(uint dim) {
 
 // get value of matrix at position i, j
 double get_matrix_val(matrix *m, uint i, uint j) {
-    assert(i <= m->num_rows-1 && j <= m->num_cols-1);
+    if (i > m->num_rows-1 || j > m->num_cols-1) {
+        BASIS_FERROR(CANNOT_ACCESS_MATRIX_VALUE, i, j, m->num_rows, m->num_cols);
+        return INFINITY;
+    }
     return m->data[i*m->num_cols + j];
 }
 
-void set_matrix_val(matrix *m, double val, uint i, uint j) {
-    assert(i <= m->num_rows-1 && j <= m->num_cols-1);
+int set_matrix_val(matrix *m, double val, uint i, uint j) {
+    if (i > m->num_rows-1 || j > m->num_cols-1) {
+        BASIS_FERROR(CANNOT_ACCESS_MATRIX_VALUE, i, j, m->num_rows, m->num_cols);
+        return 0;
+    }
     m->data[i*m->num_cols + j] = val;
+    return 1;
 }
 
 matrix *get_matrix_col(matrix *m, uint c) {
-    assert(c < m->num_cols);
+    if (c > m->num_cols) {
+        BASIS_FERROR(CANNOT_GET_MATRIX_COL, c, m->num_cols);
+        return NULL;
+    }
     matrix *r = new_matrix(m->num_rows, 1);
     for (uint i = 0; i < m->num_rows; i++) {
         double val = get_matrix_val(m, i, c);
@@ -96,7 +144,10 @@ matrix *get_matrix_col(matrix *m, uint c) {
 }
 
 matrix *get_matrix_row(matrix *m, uint c) {
-    assert(c < m->num_rows);
+    if (c > m->num_rows) {
+        BASIS_FERROR(CANNOT_GET_MATRIX_ROW, c, m->num_rows);
+        return NULL;
+    }
     matrix *r = new_matrix(1, m->num_cols);
     for (uint i = 0; i < m->num_cols; i++) {
         double val = get_matrix_val(m, c, i);
@@ -133,8 +184,8 @@ fmatrices *read_matrix(char *filename) {
     int curr_size = SIZE;
 
     if (f == NULL) {
-        fprintf(stderr, "Error: Cannot open %s\n", filename);
-        exit(1);
+        BASIS_FERROR(CANNOT_OPEN_FILE, filename);
+        return NULL;
     }
 
     while (1) {    
@@ -142,12 +193,18 @@ fmatrices *read_matrix(char *filename) {
         if (fscanf(f, "%d", &num_rows) == EOF) {
             break;
         };
-        fscanf(f, "%d", &num_cols);
+        if (fscanf(f, "%d", &num_cols) == EOF) {
+            BASIS_FERROR(CANNOT_READ_FILE, filename);
+            return NULL;
+        };
         m[fm->count] = new_matrix(num_rows, num_cols);
 
         for (uint i = 0; i < num_rows; ++i) {
             for (uint j = 0; j < num_cols; ++j) {
-                fscanf(f, "%lf\t", &m[fm->count]->data[i*num_cols + j]);
+                if (fscanf(f, "%lf\t", &m[fm->count]->data[i*num_cols + j]) == EOF) {
+                    BASIS_FERROR(CANNOT_READ_FILE, filename);
+                    return NULL;
+                }
             }
         }
 
@@ -183,7 +240,7 @@ matrix *copy_matrix(matrix *m) {
 // destructor for matrix
 void free_matrix(void *_m) {
     matrix *m = (matrix *)_m;
-    free(m->data);
+    rc_free_ref(m->data);
 }
 
 // print matrix to stdout

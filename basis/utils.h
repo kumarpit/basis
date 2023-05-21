@@ -45,6 +45,12 @@ void basis_vlog(FILE* stream, const char *file_name,
         basis_log(stderr, __FILE__, __LINE__, RED fmt RESET); \
       } \
 
+#define NP_CHECK(ptr) \
+        if (!(ptr)) { \
+            fprintf(stderr, "%s:%d NULL POINTER: %s \n", \
+                __FILE__, __LINE__, (#ptr)); \
+            exit(-1); \
+        } \
 
 double rand_interval(double min, double max);
 void map(void (*f) (void *, void *, void **), int n, void **a0, void **a1, void **d);

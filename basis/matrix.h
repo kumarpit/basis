@@ -35,7 +35,7 @@ matrix *copy_matrix(matrix *m);
 void free_matrix(void *m);
 void print_matrix(matrix *m);
 double get_matrix_val(matrix *m, uint i, uint j);
-void set_matrix_val(matrix *m, double val, uint i, uint j);
+int set_matrix_val(matrix *m, double val, uint i, uint j);
 matrix *get_matrix_col(matrix *m, unsigned int c);
 matrix *get_matrix_row(matrix *m, unsigned int c);
 

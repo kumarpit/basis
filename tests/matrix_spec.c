@@ -2,6 +2,8 @@
 #include "../basis/matrix.h"
 #include "../basis/refcount.h"
 
+// TODO: UPDATE TESTS TO TEST FOR ERROR CASES
+
 Test(Matrix, read_matrix) {
     fmatrices *read = read_matrix("tests/test_matrices/matrix1.data");
     matrix *m1 = new_matrix(3,3);

@@ -9,13 +9,13 @@
     "Vector initialization requires a dimension of atleast 1 \n" \
 
 #define CANNOT_ADD_VEC \
-    "Vector addition requires two vectors of the same dimension \n" \
+    "Vector addition requires two vectors of the same dimension. Adding vectors of dimension %d and %d. \n" \
 
 #define CANNOT_DOT_VEC \
-    "Vector dot product requires two vectors of the same dimension \n" \
+    "Vector dot product requires two vectors of the same dimension. Taking dot product of vectors of dimension %d and %d. \n" \
 
 #define CANNOT_CROSS_VEC \
-    "Vector cross product requires two vectors of the same dimension \n" \ 
+    "Vector cross product requires two vectors of the same dimension. Taking cross product of vectors of dimension %d and %d. \n" \
 
 
 // generates new zero-valued vector
@@ -52,7 +52,7 @@ vec *make_vec3d(double i, double j, double k) {
 // vector addition
 vec *add_vec(vec *v1, vec *v2) {
     if (v1->dim != v2->dim) {
-        BASIS_ERROR(CANNOT_ADD_VEC);
+        BASIS_FERROR(CANNOT_ADD_VEC, v1->dim, v2->dim);
         return NULL;
     }
     vec *v = new_vec(v1->dim);
@@ -91,7 +91,7 @@ int are_equal_vec(vec *v1, vec *v2) {
 // vector dot product
 double dot(vec *v1, vec *v2) {
     if (v1->dim != v2->dim) {
-        BASIS_ERROR(CANNOT_DOT_VEC);
+        BASIS_FERROR(CANNOT_DOT_VEC, v1->dim, v2->dim);
         return INFINITY;
     }
     double sum = 0;
@@ -112,7 +112,7 @@ int are_orthogonal_vec(vec *v1, vec *v2) {
 // TODO!!!
 vec *cross(vec *v1, vec *v2) {
     if (v1->dim != v2->dim) {
-        BASIS_ERROR(CANNOT_DOT_VEC);
+        BASIS_FERROR(CANNOT_CROSS_VEC, v1->dim, v2->dim);
         return NULL;
     }
     // IMPLEMENT DETERMINANTS FIRST

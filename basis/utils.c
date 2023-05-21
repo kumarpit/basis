@@ -52,8 +52,6 @@ void basis_vlog(
 #endif
 }
 
-
-
 double rand_interval(double min, double max) {
     double d;
     d = (double) rand() / ((double) RAND_MAX + 1);
