@@ -11,7 +11,7 @@ vec *new_vec(uint dim) {
     assert(dim != 0);
     vec *v = rc_malloc(sizeof(vec), free_vec);
     v->dim = dim;
-    v->components = calloc(dim, sizeof(double));
+    v->components = rc_malloc(dim * sizeof(double), NULL);
     return v;
 }
 
@@ -111,5 +111,5 @@ double vec_mag_squared(vec *v) {
 // destroy a vector
 void free_vec(void *_v) {
     vec *v = (vec *)_v;
-    free(v->components);
+    rc_free_ref(v->components);
 }

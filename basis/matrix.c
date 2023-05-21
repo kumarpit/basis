@@ -126,7 +126,7 @@ void free_fmatrices(void *_fm) {
 fmatrices *read_matrix(char *filename) {
     FILE *f = fopen(filename, "r");
     fmatrices *fm = rc_malloc(sizeof(fmatrices), free_fmatrices);
-    fm->matrices = malloc(SIZE * sizeof(matrix*));
+    fm->matrices = rc_malloc(SIZE * sizeof(matrix*), NULL);
     fm->count = 0;
     matrix **m = fm->matrices;
 
@@ -155,11 +155,11 @@ fmatrices *read_matrix(char *filename) {
         
         if (fm->count == SIZE) {
             // DOUBLE SIZE AND COPY OVER ARRAY
-            matrix **new = malloc(2 * curr_size * sizeof(matrix*));
+            matrix **new = rc_malloc(2 * curr_size * sizeof(matrix*), NULL);
             for (uint i = 0; i < fm->count; i++) {
                 new[i] = fm->matrices[i];
             }
-            free(fm->matrices);
+            rc_free_ref(fm->matrices);
             fm->matrices = new;
             curr_size *= 2;
         }

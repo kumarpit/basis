@@ -10,6 +10,7 @@ typedef struct _rc_header {
 
 void *rc_malloc(int nbytes, rc_finalizer_t finalizer) {
   rc_header *rc = malloc(nbytes + sizeof(rc_header));
+  NP_CHECK(rc);
   rc->refcount = 1;
   rc->finalizer = finalizer;
   return (void *)(rc + 1);
