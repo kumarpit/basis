@@ -1,6 +1,8 @@
 #ifndef UTILS
 #define UTILS
 
+#include <stdio.h>
+
 typedef unsigned int uint;
 
 /**

@@ -4,6 +4,7 @@
 #include "refcount.h"
 #include <math.h>
 #include "utils.h"
+#include <stdbool.h>
 
 #define CANNOT_MAKE_VEC \
     "Vector initialization requires a dimension of atleast 1 \n" \
@@ -78,14 +79,14 @@ void scale_vec(double scale, vec *v) {
 }
 
 // check vector equality (by value, not by reference)
-int are_equal_vec(vec *v1, vec *v2) {
+bool are_equal_vec(vec *v1, vec *v2) {
     if (v1->dim != v2->dim) return 0;
     for (uint i = 0; i < v1->dim; i++) {
         if (v1->components[i] != v2->components[i]) {
-            return 0;
+            return false;
         }
     }
-    return 1;
+    return true;
 }
 
 // vector dot product
@@ -103,8 +104,8 @@ double dot(vec *v1, vec *v2) {
 }
 
 // check if two vectors are othogonal
-int are_orthogonal_vec(vec *v1, vec *v2) {
-    if (v1->dim != v2->dim) return 0;
+bool are_orthogonal_vec(vec *v1, vec *v2) {
+    if (v1->dim != v2->dim) return false;
     return dot(v1, v2) == 0;
 }
 

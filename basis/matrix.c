@@ -8,11 +8,9 @@
 #include <pthread.h>
 #include "refcount.h"
 #include "utils.h"
+#include <stdbool.h>
 
 #define NUM_THREADS 4
-#define tv_ms_diff(tv1, tv2) \
-        (tv2.tv_sec * 1000) + ((double)tv2.tv_usec / 1000) - \
-        ((tv1.tv_sec * 1000) + ((double)tv1.tv_usec / 1000))
 
 #define CANNOT_MAKE_MATRIX \
     "Matrix requires non-zero dimensions \n" \
@@ -32,6 +30,13 @@
 #define CANNOT_READ_FILE \
     "Cannot read file %s. Invalid formatting."
 
+
+typedef struct matrix_t {
+    uint num_rows;
+    uint num_cols;
+    double *data;
+    int is_square;
+} matrix;
 
 typedef struct global_thread_args_t {
     uint dim_rows;
@@ -156,6 +161,14 @@ matrix *get_matrix_row(matrix *m, uint c) {
     return r;
 }
 
+uint num_rows(matrix *m) {
+    return m->num_rows;
+}
+
+uint num_cols(matrix *m) {
+    return m->num_cols;
+}
+
 /**
  * PRIVATE
  * destroy fmatrices struct
@@ -173,6 +186,8 @@ void free_fmatrices(void *_fm) {
  * (rows, columns) and each row of the matrix on a new line (see ./tests/test_matrices/matrix{N}.txt)
  * Return a fmatrices struct specifying the count - number of matrices read
  * and a matrix ** (array of matrix pointers)
+ *
+ * TODO: ability to add comments to input file - skip lines starting with #
 */
 fmatrices *read_matrix(char *filename) {
     FILE *f = fopen(filename, "r");
@@ -254,19 +269,19 @@ void print_matrix(matrix *m) {
 }
 
 // checks if two matrices are equal (by value, not by reference)
-int are_equal_matrices(matrix *a, matrix *b) {
+bool are_equal_matrices(matrix *a, matrix *b) {
     if (!(a->num_rows == b->num_rows) && !(a->num_cols && b->num_cols)) {
-        return 0;
+        return false;
     }
     uint num_cols = a->num_cols;
     for (uint i = 0; i < a->num_rows; i++) {
         for (uint j = 0; j < num_cols; j++) {
             if (fabs(get_matrix_val(a, i, j) - get_matrix_val(b, i, j)) > 0.0001) {
-                return 0;
+                return false;
             }
         }
     }
-    return 1;
+    return true;
 }
 
 // scalar multiplication
@@ -286,10 +301,10 @@ void scalar_mult(matrix *m, double num) {
 void *matrix_mult_t(void *arg) {
     thread_args *args = (thread_args *) arg;
     global_thread_args *g = args->globals;
-    for(uint i = 0; i < g->dim_rows; i++) {
-        for(uint j = 0; j < g->dim_cols; j++) {
+    for (uint i = 0; i < g->dim_rows; i++) {
+        for (uint j = 0; j < g->dim_cols; j++) {
             double thread_private_tmp = 0;
-            for(uint k = args->start; k < args->end; k++) {
+            for (uint k = args->start; k < args->end; k++) {
                 thread_private_tmp += get_matrix_val(g->a, i, k) * get_matrix_val(g->b, k, j);
             }
             pthread_mutex_lock(&lock);
@@ -338,5 +353,6 @@ matrix *matrix_mult(matrix *a, matrix *b) {
     for(int i = 0; i < NUM_THREADS; i++) {
         pthread_join(child_threads[i], NULL);
     }
+
     return res;
 }
