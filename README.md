@@ -29,7 +29,7 @@ Here are the operations that this library hopes to accomplish:
     - Determining Eigenvalues and Eigenvectors
     - Determinants
     - Matrix Inverse
-    - LU, QR, SVD Decomposition
+    - LU (with Partial Pivoting), QR, SVD Decomposition
     - Least Squares Solution to `Ax = b`
     - Polynomial and Cubic Spline interpolation
 - Linear Programming
