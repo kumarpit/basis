@@ -37,11 +37,18 @@ matrix *get_matrix_row(matrix *m, unsigned int c);
 uint num_rows(matrix *m);
 uint num_cols(matrix *m);
 
+// row operations
+void swap_row(matrix *m, uint i, uint j);
+void mult_row(matrix *m, double k, uint i);
+void add_row(matrix *m, uint i, uint j, double scale);
+void normalize_row(matrix *m, uint i);
+
 /**
 matrix operations
 */
 bool are_equal_matrices(matrix *a, matrix *b);
 void scalar_mult(matrix *m, double num);
 matrix *matrix_mult(matrix *a, matrix *b);
+void ref(matrix *m);
 
 #endif

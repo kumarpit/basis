@@ -11,6 +11,7 @@
 #include <stdbool.h>
 
 #define NUM_THREADS 4
+#define ZERO 0.001
 
 #define CANNOT_MAKE_MATRIX \
     "Matrix requires non-zero dimensions \n" \
@@ -356,3 +357,110 @@ matrix *matrix_mult(matrix *a, matrix *b) {
 
     return res;
 }
+
+/**
+ * ROW OPERATIONS
+*/
+
+// matrix[j][k] = scale * matrix[i][k] + matrix[j][k]
+void add_row(matrix *m, uint i, uint j, double scale) {
+    if (i > m->num_rows - 1) {
+        BASIS_FERROR(CANNOT_GET_MATRIX_ROW, i, m->num_rows);
+        return NULL;
+    } else if (j > m->num_rows - 1) {
+        BASIS_FERROR(CANNOT_GET_MATRIX_ROW, j, m->num_rows);
+        return NULL;
+    }
+    for (uint k = 0; k < m->num_cols; k++) {
+        double sum = scale * get_matrix_val(m, i, k) + get_matrix_val(m, j, k);
+        set_matrix_val(m, sum, j, k);
+    }
+}
+
+/**
+ * Swap row i with row j
+*/
+void swap_row(matrix *m, uint i, uint j) {
+    if (i > m->num_rows - 1) {
+        BASIS_FERROR(CANNOT_GET_MATRIX_ROW, i, m->num_rows);
+        return NULL;
+    } else if (j > m->num_rows - 1) {
+        BASIS_FERROR(CANNOT_GET_MATRIX_ROW, j, m->num_rows);
+        return NULL;
+    }
+    if (i == j) return;
+    for (uint k = 0; k < m->num_cols; k++) {
+        double temp = get_matrix_val(m, j, k);
+        set_matrix_val(m, get_matrix_val(m, i, k), j, k);
+        set_matrix_val(m, temp, i, k);
+    }
+}
+
+void mult_row(matrix *m, double scale, uint i) {
+    if (i > num_rows - 1) {
+        BASIS_FERROR(CANNOT_GET_MATRIX_ROW, i, m->num_rows);
+        return NULL;
+    }
+    for (uint k = 0; k < m->num_cols; k++) {
+        double val = get_matrix_val(m, i, k);
+        set_matrix_val(m, scale * val, i, k);
+    }
+}
+
+void normalize_row(matrix *m, uint i) {
+    if (i >= m->num_rows) {
+        BASIS_FERROR(CANNOT_GET_MATRIX_ROW, i, m->num_rows);
+        return NULL;
+    }
+    double lead;
+    bool found = false;
+    for (uint j = 0; j < m->num_cols; j++) {
+        double curr = get_matrix_val(m, i, j);
+        if (curr > ZERO) {
+            if (!found) {
+                lead = curr;
+                found = true;
+            }
+            set_matrix_val(m, curr / lead, i, j);
+        } 
+    }
+}
+
+/**
+ * PRIVATE
+*/
+int pivot_idx(matrix *m, uint row, uint col) {
+    for (uint i = row; i < m->num_rows; i++) {
+        if (fabs(get_matrix_val(m, i, col)) >  ZERO) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void ref(matrix *m) {
+    int i, j, pivot;
+    i = j = 0;
+    while (i < m->num_rows && j < m->num_cols) {
+        pivot = pivot_idx(m, i, j);
+        if (pivot < 0) {
+            j++;
+            continue;
+        }
+        swap_row(m, i, pivot);
+        print_matrix(m);
+        printf("\n");
+        normalize_row(m, i);
+        print_matrix(m);
+        printf("\n");
+        for (uint k = i+1; k < m->num_rows; k++) {
+            if (fabs(get_matrix_val(m, k, j)) > ZERO) {
+                add_row(m, i, k, -(get_matrix_val(m, k, j)));
+                print_matrix(m);
+                printf("\n");
+            }
+        }
+        i++;j++;
+    }
+}
+
