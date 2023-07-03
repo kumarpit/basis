@@ -263,7 +263,7 @@ void free_matrix(void *_m) {
 void print_matrix(matrix *m) {
     for (uint i = 0; i < m->num_rows; i++) {
         for (uint j = 0; j < m->num_cols; j++) {
-            printf("%lf\t", get_matrix_val(m, i, j));
+            printf("%.2lf\t", get_matrix_val(m, i, j));
         }
         printf("\n");
     }
@@ -448,16 +448,10 @@ void ref(matrix *m) {
             continue;
         }
         swap_row(m, i, pivot);
-        print_matrix(m);
-        printf("\n");
         normalize_row(m, i);
-        print_matrix(m);
-        printf("\n");
         for (uint k = i+1; k < m->num_rows; k++) {
             if (fabs(get_matrix_val(m, k, j)) > ZERO) {
                 add_row(m, i, k, -(get_matrix_val(m, k, j)));
-                print_matrix(m);
-                printf("\n");
             }
         }
         i++;j++;
